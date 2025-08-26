@@ -1,4 +1,4 @@
-[![Calmo Banner](https://github.com/CalmoAI/.github/raw/main/profile/github-readme-banner-2025-06-20.png)](https://www.getcalmo.com?ref=github-org-readme)
+[![Calmo Banner](https://github.com/CalmoAI/.github/blob/main/profile/github-readme-banner.png)](https://www.getcalmo.com?ref=github-org-readme)
 
 Automate your DevOps operations with AI agents. From investigating support tickets to incident response, Calmo builds AI agents to handle complex DevOps tasks.
 
