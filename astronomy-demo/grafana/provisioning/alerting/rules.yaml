@@ -1,0 +1,73 @@
+apiVersion: 1
+groups:
+  - orgId: 1
+    name: astronomy-shop-slo
+    interval: 1m
+    rules:
+      - uid: checkout-p95-latency
+        title: checkout p95 latency > 2s
+        condition: C
+        for: 5m
+        labels:
+          service: checkout
+          slo: p95-latency
+          env: staging
+        annotations:
+          runbook_url: https://git/ops/runbooks/checkout-latency
+        data:
+          - refId: A
+            datasourceUid: ${GRAFANA_PROM_DS_UID}
+            model:
+              interval: ""
+              intervalFactor: 2
+              legendFormat: p95
+              refId: A
+              expr: |
+                histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket{service="checkout"}[5m])) by (le))
+              range: true
+              datasource: {uid: ${GRAFANA_PROM_DS_UID}}
+          - refId: B
+            datasourceUid: __expr__
+            model:
+              type: threshold
+              refId: B
+              expression: 2
+          - refId: C
+            datasourceUid: __expr__
+            model:
+              type: math
+              refId: C
+              expression: "$A > $B"
+      - uid: checkout-error-rate
+        title: checkout error-rate > 3%
+        condition: C
+        for: 5m
+        labels:
+          service: checkout
+          slo: error-rate
+          env: staging
+        annotations:
+          runbook_url: https://git/ops/runbooks/checkout-latency
+        data:
+          - refId: A
+            datasourceUid: ${GRAFANA_PROM_DS_UID}
+            model:
+              refId: A
+              expr: |
+                sum(rate(http_requests_total{service="checkout",status=~"5.."}[5m]))
+              range: true
+              datasource: {uid: ${GRAFANA_PROM_DS_UID}}
+          - refId: B
+            datasourceUid: ${GRAFANA_PROM_DS_UID}
+            model:
+              refId: B
+              expr: |
+                sum(rate(http_requests_total{service="checkout"}[5m]))
+              range: true
+              datasource: {uid: ${GRAFANA_PROM_DS_UID}}
+          - refId: C
+            datasourceUid: __expr__
+            model:
+              type: math
+              refId: C
+              expression: "($A / clamp_min($B, 1)) > 0.03"

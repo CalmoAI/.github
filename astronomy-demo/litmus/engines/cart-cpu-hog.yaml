@@ -1,0 +1,22 @@
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: cart-cpu-hog
+  namespace: otel-demo
+spec:
+  appinfo:
+    appns: otel-demo
+    applabel: "app=cartservice"
+    appkind: deployment
+  chaosServiceAccount: litmus-admin
+  experiments:
+    - name: pod-cpu-hog
+      spec:
+        components:
+          env:
+            - name: TOTAL_CHAOS_DURATION
+              value: '600'
+            - name: CPU_CORES
+              value: '1'
+            - name: PODS_AFFECTED_PERC
+              value: '100'

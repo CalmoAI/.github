@@ -1,0 +1,34 @@
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosExperiment
+metadata:
+  name: pod-cpu-hog
+  labels:
+    litmuschaos.io/name: pod-cpu-hog
+spec:
+  definition:
+    scope: Namespaced
+    permissions:
+      - apiGroups: ['']
+        resources: ['pods', 'pods/log']
+        verbs: ['create', 'list', 'get', 'update', 'patch', 'delete']
+      - apiGroups: ['']
+        resources: ['events']
+        verbs: ['create', 'list', 'get', 'update', 'patch']
+      - apiGroups: ['apps']
+        resources: ['deployments']
+        verbs: ['list', 'get']
+    image: litmuschaos/go-runner:latest
+    imagePullPolicy: IfNotPresent
+    args:
+      - -c
+      - ./experiments -name pod-cpu-hog
+    command: ["/bin/bash"]
+    env:
+      - name: TOTAL_CHAOS_DURATION
+        value: '600'
+      - name: CPU_CORES
+        value: '1'
+      - name: PODS_AFFECTED_PERC
+        value: '100'
+      - name: SEQUENCE
+        value: parallel

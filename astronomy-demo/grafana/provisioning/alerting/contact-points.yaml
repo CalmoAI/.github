@@ -1,0 +1,17 @@
+apiVersion: 1
+contactPoints:
+  - orgId: 1
+    name: calmo-webhook
+    receivers:
+      - uid: calmo-webhook-receiver
+        type: webhook
+        settings:
+          url: ${CALMO_WEBHOOK_URL}
+          httpMethod: POST
+          sendResolved: true
+          username: ""
+          password: ""
+          maxAlerts: 0
+        secureFields:
+          password: ${CALMO_WEBHOOK_SECRET}
+    disableResolveMessage: false
